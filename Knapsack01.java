@@ -1,4 +1,4 @@
-
+package com.dynamicprogramming;
 import java.util.*;
 class Knapsack01{
     public static void main(String args[]){
