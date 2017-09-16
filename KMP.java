@@ -2,18 +2,31 @@ import java.util.*;
 
 class KMP{
     public static void main(String args[]){
-        String text="abcdefghi";
-        String pattern="ghj";
-        boolean result=kmp(text.toCharArray(),pattern.toCharArray());
-        System.out.println(result);
+        String text="abcghidefghi";
+        String pattern="ghi";
+        int result[]=kmp(text.toCharArray(),pattern.toCharArray());
+        if(result.length==0)
+            System.out.println("Pattern Not Found!");
+        else{
+            System.out.println("Following occurances of the Pattern found:");
+            for(int i=0;i<result.length;i++){
+                int j=pattern.length()+result[i]-1;
+                System.out.println("Starting at index "+result[i]+" and ending at index "+j);
+            }          
+        }
     }
-    public static boolean kmp(char[] text, char[] pattern){
+    public static int[] kmp(char[] text, char[] pattern){
         int[] temp=calculateTemporaryArray(pattern);
         int i=0,j=0;
+        ArrayList<Integer> res= new ArrayList<Integer>();
         while(i<text.length&&j<pattern.length){
             if(text[i]==pattern[j]){
                 i++;
                 j++;
+                if(j==pattern.length){
+                    res.add(i-pattern.length);
+                    j=0;
+                }
             }
             else{
                 if(j!=0){
@@ -23,9 +36,11 @@ class KMP{
                     i++;
             }
         }
-        if(j==pattern.length)
-                return true;
-        return false;
+        int ret[]= new int[res.size()];
+        i=0;
+        for(Integer k:res)
+            ret[i++]=k;
+        return ret;
     }
     public static int[] calculateTemporaryArray(char[] pattern){
         int size=pattern.length;
