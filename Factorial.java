@@ -1,3 +1,9 @@
+/*
+* In order to find Trailing zeros, all we need to find is powers of 2s and 5s as their multiplication results in a trailing zero
+* Since the number of 5s will be less than the number of 2s, there the number or trailing zeros will be equal 
+* to the number of 5s (Pay attention to the fact that 25 produces 2 5s, 125 produces 3 5s and so on).
+*/
+
 import java.util.*;
 import java.io.*;
 
