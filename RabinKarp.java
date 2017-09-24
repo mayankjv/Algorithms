@@ -1,3 +1,9 @@
+/**
+* Rabin Karp Algorithm for Pattern matching that uses hashing.
+* Time Complexity: O(mn).
+*
+* @author Mayank
+*/
 import java.util.*;
 
 class RabinKarp{
