@@ -1,3 +1,9 @@
+/**
+* The Knuth Morris Pratt algorithm for patterm searching.
+* Time Complexity O(m+n), where m and n are the lengthhs of the Text and the Pattern.
+*
+* @author Mayank
+*/
 import java.util.*;
 
 class KMP{
