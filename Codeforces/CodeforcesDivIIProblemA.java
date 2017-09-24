@@ -1,4 +1,4 @@
-import java.util.*;
+
 /*
  * This is one of the problems from Codeforces Round #435 (Div. 2)
  * 
@@ -12,8 +12,9 @@ import java.util.*;
 
 /**
  *
- * @author Logan
+ * @author Mayank
  */
+import java.util.*;
 public class Mex {
     public static void main(String args[]){
         Scanner sc= new Scanner(System.in);
