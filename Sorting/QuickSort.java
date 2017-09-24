@@ -1,3 +1,9 @@
+/**
+*
+*
+* @author Mayank
+*
+*/
 import java.util.*;
 
 public class QuickSort {
