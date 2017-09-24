@@ -1,3 +1,7 @@
+/**
+*
+* @author Mayank
+*/
 import java.util.*;
 
 class FractionalKnapsack{
