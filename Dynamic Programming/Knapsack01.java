@@ -1,5 +1,9 @@
-package com.dynamicprogramming;
+/**
+*
+* @author Mayank
+*/
 import java.util.*;
+
 class Knapsack01{
     public static void main(String args[]){
         int[] value={22,20,5,30,24,54,31,32,18,25};
