@@ -3,7 +3,10 @@
 * Since the number of 5s will be less than the number of 2s, there the number or trailing zeros will be equal 
 * to the number of 5s (Pay attention to the fact that 25 produces 2 5s, 125 produces 3 5s and so on).
 */
-
+/**
+*
+* @author Mayank
+*/
 import java.util.*;
 import java.io.*;
 
