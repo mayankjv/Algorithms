@@ -1,4 +1,5 @@
 /**
+ * the implementation of DisjointSet can be found in another file in the same folder.
  *
  * @author Mayank
  */
@@ -42,49 +43,6 @@ public class KruskalMST{
     }
 }
 
-class DisjointSet {
-    private HashMap<Integer,Node> map= new HashMap<Integer,Node>();
-    class Node{
-        int id;
-        Node parent;
-        int rank;
-        Node(int i){
-            id=i;
-        }
-    }
-    public void makeSet(int num){
-        Node node= new Node(num);
-        node.parent=node;
-        node.rank=1;
-        map.put(num,node);
-    }
-    public boolean union(int src, int dest){
-        Node parent1=findSet(src);
-        Node parent2=findSet(dest);
-        if(parent1.id==parent2.id){
-            return false;
-        }
-        if(parent1.rank>=parent2.rank){
-            parent1.rank=(parent1.rank==parent2.rank)?(parent1.rank+1):parent1.rank;
-            parent2.parent=parent1;
-        }
-        else{
-            parent1.parent=parent2;
-        }
-        return true;
-    }
-    public Node findSet(int num){
-        return findSet(map.get(num));
-    }
-    public Node findSet(Node node){
-        Node par= node.parent;
-        if(par.id==node.id)
-            return par;
-        node.parent=findSet(node.parent);
-        return node.parent;
-    }
-    
-}
 class Edge{
     int src, dest, weight;
     Edge(int src,int dest, int weight){
