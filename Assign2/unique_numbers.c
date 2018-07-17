@@ -1,31 +1,53 @@
-/*This program takes an array as input and prints out the unique elements in that array, for example if there are repeating elements in the array, the elements will be printed just once*/
-#include<stdio.h>
 
-int generate_hash(int number);
-int generate_hash(int number){
-	return number%101;
-}
-struct node{
-	int number;
-	struct node* next;
+#include<stdio.h>
+#include<stdlib.h>
+
+void quicksort(int *arr,int first,int last){
+   int i, j, pivot, temp;
+
+   if(first<last){
+      pivot=first;
+      i=first;
+      j=last;
+
+      while(i<j){
+         while(arr[i]<=arr[pivot]&&i<last)
+            i++;
+         while(arr[j]>arr[pivot])
+            j--;
+         if(i<j){
+            temp=arr[i];
+            arr[i]=arr[j];
+            arr[j]=temp;
+         }
+      }
+
+      temp=arr[pivot];
+      arr[pivot]=arr[j];
+      arr[j]=temp;
+      quicksort(arr,first,j-1);
+      quicksort(arr,j+1,last);
+
+   }
 }
 int main(){
-	int arr[1000];
-	int lookup[101];
 	int size;
-	printf("Enter the size of the aray:");
+	printf("Enter the size of the array:");
 	scanf("%d",&size);
+	int *arr= (int*)malloc(size*sizeof(int));
 	printf("Enter the elements of the array:");
-	for(int i=0;i<size;i++){
+	for(int i=0;i<size;i++)
 		scanf("%d",&arr[i]);
-	}
-	for(int i=0;i<409;i++)
-		lookup[i]=-1;
-	for(int i=0;i<size;i++){
-		if(lookup[generate_hash(arr[i])]==-1){
+	quicksort(arr,0,size-1);
+	for(int i=0;i<size;){
+		if(arr[i]==arr[i+1]){
+			int temp=arr[i];
+			while(arr[i]==temp && i<size)
+				i++;
+		}
+		else{
 			printf("%d ",arr[i]);
-			lookup[generate_hash(arr[i])]= ;
+			i++;
 		}
 	}
-	return 0;
 }
