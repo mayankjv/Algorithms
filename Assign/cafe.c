@@ -32,15 +32,17 @@ int main(){
 	printf("  S.No.  \t\tItem Name\t\tPrice\t\tQuantity\t\tAmount\n");
 	printf("=========\t\t=========\t\t=====\t\t========\t\t======\n");
 	int total=0; //variable that will store the current total amount at any instant
-	//Loop for desplaying all the items in the bill along with their quantities and proices and total amounts
-	for(i=0;choices[i]!='\0';i++){
-		printf("%-3d\t\t\t%-10s\t\t%-5d\t\t%-3d\t\t\t%-5d\n",i+1,names[choices[i]-1],prices[choices[i]],quantities[i],quantities[i]*prices[choices[i]]); //
-		total+=quantities[i]*prices[choices[i]]; 
+	//Loop for desplaying the all items in the bill along with their quantities and proices and total amounts
+	choices[i]=-1;
+	for(i=0;choices[i]!=-1;i++){
+		printf("%-3d\t\t\t%-10s\t\t%-5d\t\t%-3d\t\t\t%-5d\n",i+1,names[choices[i]-1],prices[choices[i]-1],quantities[i],quantities[i]*prices[choices[i]-1]); //formatting the bill properly
+		total+=quantities[i]*prices[choices[i]-1]; 
+		//printf("Current Total=%n\ld",total);
 	}
+	printf("Total:%d",total);
 	printf("================================================================================\n");
-	printf("Taxes(18%)= %f\n",0.18*(float)total);  //Calculating the taxes as 18 percent of the total amount and displaying them
-	printf("                                      Total Amount to be paid=%f\n",(0.18*(float)total)+(float)total ); //Displaying the Total amount inclusive of taxes
-
+	printf("Taxes(18%)= %f\n",(float)0.18*(float)total);  //Calculating the taxes as 18 percent of the total amount and displaying them
+	printf("                                      Total Amount to be paid=%f\n",(float)(0.18*(float)total)+(float)total ); //Displaying the Total amount inclusive of taxes
 
 	return 0;
 }
