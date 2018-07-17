@@ -4,10 +4,11 @@
 #include<stdio.h>
 
 int main(){
-	char num1[100],num2[100]; // char arrays to tke input from user
-	scanf("%s",num1);
-	scanf("%s",num2);
-	if(num1[0]=='-' || num2[0]=='-'){
+	char num1[100],num2[100]; // char arrays to take input from user, the idea is to store numbers as char arrays because the number may be out of the range of long
+	scanf("%s",num1); //taking input
+	scanf("%s",num2); //taking input
+	// If The user has entered a negative number, an appropriate message is displayed
+	if(num1[0]=='-' || num2[0]=='-'){ 
 		printf("Negative numbers not yet supported!");
 		return 0;
 	}
@@ -19,6 +20,7 @@ int main(){
 	int pos=0;		// variable to incrementally write in the third char array which stores the result
 	char num3[200];	// This will be the result when read backwards.
 	while(len1>=0 && len2>=0){ //iterating from the back until at least one of the number ends
+		//validation of input
 		if((int)(num1[len1]-'0')>9 || (int)(num2[len2]-'0')>9){
 			printf("Invalid Input!!!");
 			return 0;
