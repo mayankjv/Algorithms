@@ -2,21 +2,22 @@
 #include<stdio.h>
 
 int main(){
-	int items[]={1,2,3,4,5,6,7,8};
-	char names[][30]={"Burger","Sandwich","Fries","Pizza","Pasta","Coke","Mojito","Cold Coffee"};
-	int prices[]={50,80,60,150,120,40,80,60};
-	int choices[100];
-	int quantities[100];
+	int items[]={1,2,3,4,5,6,7,8}; //Simple item codes taken in an array so as to make it easy to map to prices
+	char names[][30]={"Burger","Sandwich","Fries","Pizza","Pasta","Coke","Mojito","Cold Coffee"}; //names taken as an array to display in innvoice as well as menu
+	int prices[]={50,80,60,150,120,40,80,60}; //prices taken as an array to be mapped to the item codes
+	int choices[100]; //The items that the user will add to the order
+	int quantities[100];	//quantities of the items user will add
+	//The below code displays menu
 	printf("============================Welcome to Mayank's Cafe============================\n\n");
 	printf("======================================MENU======================================\n");
 	printf("Item Code\t\tItem Name\t\tPrice\n");
 	printf("=========\t\t=========\t\t=====\n");
 	for(int i=0;i<8;i++){
-		//printf("%d.       \t\t%s       \t\t%d\n",items[i],names[i],prices[i]);
 		printf("%-10d\t\t%-10s\t\t%-5d\n",items[i],names[i],prices[i]);
 	}
-	int i=0;
-	int ch=1;
+	int i=0; //iterator variable
+	int ch=1; //varibale to check if the user wants to add more items to order or not
+	// loop accepting the order and storing the choices and corresponding quantities in arrays
 	do{
 		printf("Enter Item code to order:");
 		scanf("%d",&choices[i++]);
@@ -25,19 +26,20 @@ int main(){
 		printf("More Items to add ?/n Enter 1 if Yes, 0 otherwise:");
 		scanf("%d",&ch);
 	}while(ch==1);
-
+	// generating Bill 
 	printf("Thank you for placing order with us!/n Your Innvoice is:\n\n\n\n");
 	printf("======================================BILL======================================\n");
 	printf("  S.No.  \t\tItem Name\t\tPrice\t\tQuantity\t\tAmount\n");
 	printf("=========\t\t=========\t\t=====\t\t========\t\t======\n");
-	int total=0;
+	int total=0; //variable that will store the current total amount at any instant
+	//Loop for desplaying all the items in the bill along with their quantities and proices and total amounts
 	for(i=0;choices[i]!='\0';i++){
-		printf("%-3d\t\t\t%-10s\t\t%-5d\t\t%-3d\t\t\t%-5d\n",i+1,names[choices[i]-1],prices[choices[i]],quantities[i],quantities[i]*prices[choices[i]]);
-		total+=quantities[i]*prices[choices[i]];
+		printf("%-3d\t\t\t%-10s\t\t%-5d\t\t%-3d\t\t\t%-5d\n",i+1,names[choices[i]-1],prices[choices[i]],quantities[i],quantities[i]*prices[choices[i]]); //
+		total+=quantities[i]*prices[choices[i]]; 
 	}
 	printf("================================================================================\n");
-	printf("Taxes(18%)= %f\n",0.18*(float)total);
-	printf("                                      Total Amount to be paid=%f\n",(0.18*(float)total)+(float)total );
+	printf("Taxes(18%)= %f\n",0.18*(float)total);  //Calculating the taxes as 18 percent of the total amount and displaying them
+	printf("                                      Total Amount to be paid=%f\n",(0.18*(float)total)+(float)total ); //Displaying the Total amount inclusive of taxes
 
 
 	return 0;
