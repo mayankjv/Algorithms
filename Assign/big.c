@@ -3,6 +3,7 @@
 // Addition is done by maintaining a carry and proceeding backwards.
 #include<stdio.h>
 
+int str_length(char str[]);
 int main(){
 	char num1[100],num2[100]; // char arrays to take input from user, the idea is to store numbers as char arrays because the number may be out of the range of long
 	scanf("%s",num1); //taking input
@@ -44,7 +45,6 @@ int main(){
 		if(carry==1){		//appending the last value of carry to the result if it is not zero
 			num3[pos++]=carry+'0';
 		}
-
 	}
 	else if(len2<=0){ 			//case when number1 will be bigger in size than number2
 		while(len1!=-1){			// just adding carry to the remaining digits of number1
