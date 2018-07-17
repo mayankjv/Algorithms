@@ -42,7 +42,8 @@ int main(){
 	printf("Total:%d",total);
 	printf("================================================================================\n");
 	printf("Taxes(18%)= %f\n",(float)0.18*(float)total);  //Calculating the taxes as 18 percent of the total amount and displaying them
-	printf("                                      Total Amount to be paid=%f\n",(float)(0.18*(float)total)+(float)total ); //Displaying the Total amount inclusive of taxes
+	printf("================================================================================\n");	
+	printf("\n                                      Total Amount to be paid=%f\n",(float)(0.18*(float)total)+(float)total ); //Displaying the Total amount inclusive of taxes
 
 	return 0;
 }
