@@ -15,16 +15,35 @@ int main(){
 	int size1,size2;
 	printf("Enter the size of the first array:");
 	scanf("%d",&size1);
+	if(size1<0){
+		printf("Invalid Size!");
+	}
+	if(size1==0){
+		goto lab1;
+	}
 	int *arr1= (int*)malloc(size1*(sizeof(int)));
 	printf("Enter the elements of first array");
 	for(int i=0;i<size1;i++)
 		scanf("%d",&arr1[i]);
+	lab1:
 	printf("Enter the size of the second array:");
 	scanf("%d",&size2);
+	if(size2<0){
+		printf("Invalid Size!");
+	}
+	if(size2==0){
+		goto lab2;
+	}
+
 	int *arr2=(int*)malloc(size2*sizeof(int));
 	printf("Enter the elements of the second array:");
 	for(int i=0;i<size2;i++)
 		scanf("%d",&arr2[i]);
+	lab2:
+	if(size1==0 && size2==0){
+		printf("No Elements to Display!");
+		return 0;
+	}
 	quicksort(arr1,0,size1-1);
 	quicksort(arr2,0,size2-1);
 	int *arr= (int*)malloc((size1+size2)*(sizeof(int)));
