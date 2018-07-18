@@ -1,6 +1,7 @@
-
 /*this program finds the nth largest number from a given array of numbers
 the algorithm used for the same is a slight optimisation of heap sort */
+
+//I am making an asumption that all the elements of the array are unique
 #include<stdio.h>
 #include<stdlib.h>
 
@@ -78,4 +79,3 @@ int main(){
     printf("The required number is: %d\n",nthLargest(arr,size,n));
 
 }
-
