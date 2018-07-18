@@ -2,6 +2,7 @@
 and the index at which it is to be inserted and it inserts the element at that position and shifts all the
 subsequent numbers in the array*/
 #include<stdio.h>
+#include<stdlib.h>
 
 void insert_element(int element, int index, int arr[], int size); 
 //This function accepts the element to be inserted, the index at which the element is to be inserted, the array,
@@ -23,7 +24,7 @@ void insert_element(int element, int index, int arr[],int size){
 }
 
 int main(){
-	int size,arr[10000],element,index; 
+	int size,element,index; 
 	lab:
 	printf("Enter the Size of the array");
 	scanf("%d",&size);
@@ -35,6 +36,7 @@ int main(){
 	//Not asking for any elements when the entered size is zero
 	if(size!=0)
 		printf("Enter the elements of the array:");
+	int *arr=(int*)malloc(size*(sizeof(int)));	
 	for(int i=0;i<size;i++)
 		scanf("%d",&arr[i]);
 	printf("Enter the element to be inserted:");
@@ -53,5 +55,3 @@ int main(){
 		printf("%d ",arr[i]);
 	return 0;
 }
-
-
