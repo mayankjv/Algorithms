@@ -4,35 +4,9 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-//Quicksort algorithm to sort the array
-void quicksort(int *arr,int first,int last){
-   int i, j, pivot, temp;
+void quicksort(int arr[], int start, int end);
+void swap(int arr[], int index1, int index2);
 
-   if(first<last){
-      pivot=first;
-      i=first;
-      j=last;
-
-      while(i<j){
-         while(arr[i]<=arr[pivot]&&i<last)
-            i++;
-         while(arr[j]>arr[pivot])
-            j--;
-         if(i<j){
-            temp=arr[i];
-            arr[i]=arr[j];
-            arr[j]=temp;
-         }
-      }
-
-      temp=arr[pivot];
-      arr[pivot]=arr[j];
-      arr[j]=temp;
-      quicksort(arr,first,j-1);
-      quicksort(arr,j+1,last);
-
-   }
-}
 int main(){
 	int size;
 	printf("Enter the size of the array:");
@@ -54,4 +28,30 @@ int main(){
 			i++;
 		}
 	}
+}
+//recursive function for quicksort, which takes an array as input and the boundary indices which are to be sorted
+void quicksort(int arr[], int start, int end){
+	int pivot= start; // taking the first element as the pivot everytime quicksort is called
+	int first=start; //this will be the running variable that will store the left bound during traversal
+	int last=end;   //this will be the running variable that will store the right bound during traversal
+	while(first<last){
+		while(arr[first]<=arr[pivot] && first<last) //skip all the elements starting at the beginning that are smaller than or equal to the pivot element
+			first++;
+		while(arr[last]>arr[pivot] )  //skip all the elements starting at the end that are greater than pivot element
+			last--;
+		if(first<last){
+			swap(arr, first ,last); //swap the elements that first and the last index because the at this point of time the element at last is smaller than pivot and the one at first is larger than pivot element
+		}
+		swap(arr,pivot,last); // swap in order to send pivot to its position
+		quicksort(arr,start,last-1); //call quicksort for the left side of pivot elemet
+		quicksort(arr,last+1,end); //call quicksort for the right side of the pivot element.
+		
+	}
+}
+//a function that takes an integer array as input and two indices, and swaps the values present at those indices in the array
+void swap(int arr[], int index1, int index2){
+	int temp;
+	temp=arr[index1];
+	arr[index1]=arr[index2];
+	arr[index2]=temp;
 }
