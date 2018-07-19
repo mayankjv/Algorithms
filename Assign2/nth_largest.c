@@ -10,7 +10,7 @@ void Heapify(int a[],int size, int curr);
 void swap(int arr[], int idx1, int idx2);
 void quicksort(int arr[], int start, int end);
 void buildMinHeap(int arr[],int size);
-int nthlargest(int arr[],int size,int n);
+int nthLargest(int arr[],int size,int n);
 int remove_duplicates(int arr[], int size);
 
 int main(){
@@ -28,10 +28,12 @@ int main(){
     scanf("%d",&n);
     //printf("New Size=%d",size_new); debug statement
     if(size_new<n){
-	printf("There are few unique numbers in the array!");
+	printf("Element doesn't exist!");
     }
-    else
-    printf("The required number is: %d\n",nthLargest(arr,size_new,n));
+    else{
+    	printf("The required number is: %d\n",nthLargest(arr,size_new,n));
+	//printf("The required number is: %d\n",arr[size-n]);
+    }
 
 }
 
