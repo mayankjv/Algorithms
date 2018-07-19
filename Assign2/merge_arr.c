@@ -48,9 +48,17 @@ int main(){
 	quicksort(arr2,0,size2-1);
 	int *arr= (int*)malloc((size1+size2)*(sizeof(int)));
 	merge(arr,arr1,arr2,size1,size2);
-	printf("The Merged sorted array is as follows:");
-	for(int i=0;i<size1+size2;i++)
-		printf("%d ",arr[i]);
+	int choice=-1;
+	printf("Sorting order, 0 for Ascending, 1 for Descending: ");
+	scanf("%d",&choice);	
+	printf("The Merged array sorted is as follows:");
+	if(choice==0)
+		for(int i=0;i<size2+size1;i++)
+			printf("%d ",arr[i]);
+	else
+		for(int i=size1+size2-1;i>=0;i--)
+			printf("%d ",arr[i]);
+	return 0;
 
 }
 //This fuction takes two sorted arrays as inputs along with their sizes and a third array in which the third array will be stored. And merges the two arrays into the third one
