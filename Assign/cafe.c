@@ -1,12 +1,17 @@
 // this program allows a user to place an order at cafe and generates respective bill corresponding the order.
 #include<stdio.h>
+#include<stdlib.h>
+
 
 int main(){
+	//long long int num=0;
+	//num=input_llint();
+	//printf("%lli",num);
 	int items[]={1,2,3,4,5,6,7,8}; //Simple item codes taken in an array so as to make it easy to map to prices
 	char names[][30]={"Burger","Sandwich","Fries","Pizza","Pasta","Coke","Mojito","Cold Coffee"}; //names taken as an array to display in innvoice as well as menu
 	int prices[]={50,80,60,150,120,40,80,60}; //prices taken as an array to be mapped to the item codes
-	int choices[100]; //The items that the user will add to the order
-	int quantities[100];	//quantities of the items user will add
+	int *choices= (int*)malloc(sizeof(int)); //The items that the user will add to the order
+	int *quantities= (int*)malloc(sizeof(int));;	//quantities of the items user will add
 	//The below code displays menu
 	printf("============================Welcome to Mayank's Cafe============================\n\n");
 	printf("======================================MENU======================================\n");
@@ -15,15 +20,24 @@ int main(){
 	for(int i=0;i<8;i++){
 		printf("%-10d\t\t%-10s\t\t%-5d\n",items[i],names[i],prices[i]);
 	}
+	int size=1;
 	int i=0; //iterator variable
 	int ch=1; //varibale to check if the user wants to add more items to order or not
 	// loop accepting the order and storing the choices and corresponding quantities in arrays
 	do{
 		printf("Enter Item code to order:");
 		scanf("%d",&choices[i++]);
+		choices= realloc(choices,++size);
+
+		if(choices[i-1]<1 || choices[i-1]>8){
+			printf("Please valid Enter a input.");
+			goto label;		
+		}
 		printf("Enter The quantity of %s to order:",names[choices[i-1]-1]);
 		scanf("%d",&quantities[i-1]);
-		printf("More Items to add ?/n Enter 1 if Yes, 0 otherwise:");
+		quantities= realloc(quantities,++size);
+	label:
+		printf("\nMore Items to add y/n Enter 1 if Yes, 0 otherwise:");
 		scanf("%d",&ch);
 	}while(ch==1);
 	// generating Bill 
@@ -41,7 +55,7 @@ int main(){
 	}
 	printf("Total:%d",total);
 	printf("================================================================================\n");
-	printf("Taxes(18%)= %f\n",(float)0.18*(float)total);  //Calculating the taxes as 18 percent of the total amount and displaying them
+	printf("Taxes= %f\n",(float)0.18*(float)total);  //Calculating the taxes as 18 percent of the total amount and displaying them
 	printf("================================================================================\n");	
 	printf("\n                                      Total Amount to be paid=%f\n",(float)(0.18*(float)total)+(float)total ); //Displaying the Total amount inclusive of taxes
 
