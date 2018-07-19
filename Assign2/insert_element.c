@@ -1,57 +1,84 @@
-/* This program takes array as input, additionally it takes an element that is to be inserted in the array
-and the index at which it is to be inserted and it inserts the element at that position and shifts all the
-subsequent numbers in the array*/
+//This program takes the size of an array and the array as input from the user and
+//displays only the elements that occur just once in the array.
+// the approach used is to sort the elements and if any two consecutive elements are equal, do not print them.
 #include<stdio.h>
 #include<stdlib.h>
 
-void insert_element(int element, int index, int arr[], int size); 
-//This function accepts the element to be inserted, the index at which the element is to be inserted, the array,
-// and the size of the array and it inserts the element in the given array at the required position.
-void insert_element(int element, int index, int arr[],int size){
-	int temp=arr[index]; // A temporary variable to store the element that will be overwritten.
-	int i;	//Iterator variable
-	//writing the element at the index and shifting all the subsequent elements.
-	for(i=index;i<size-1;i++){
-		arr[i]=element;
-		element=temp;
-		temp=arr[i+1];
-	}
-	arr[i]=element;
-	//since maximum array size is specified to be 10000
-	if(size<10000){
-			arr[i+1]=temp;
-	}
-}
+void quicksort(int arr[],int rank[], int start, int end);
+void swap(int arr[],int rank[], int index1, int index2);
 
 int main(){
-	int size,element,index; 
-	lab:
-	printf("Enter the Size of the array");
+	int size;
+	printf("Enter the size of the array:");
 	scanf("%d",&size);
-	// Since size constraint is specified and size can not be negative
-	if(size<0 || size>10000 ){
-		printf("Enter a valid size !!!/n");
-		goto lab;
-	}
-	//Not asking for any elements when the entered size is zero
-	if(size!=0)
-		printf("Enter the elements of the array:");
-	int *arr=(int*)malloc(size*(sizeof(int)));	
-	for(int i=0;i<size;i++)
-		scanf("%d",&arr[i]);
-	printf("Enter the element to be inserted:");
-	scanf("%d",&element);
-	printf("Enter the Index:");
-	scanf("%d",&index);
-	//Validating the index.
-	if(index<0 || index>size){
-		printf("Invalid Index\n");
+	if(size<=0){
+		printf("invalid size");
 		return 0;
 	}
-	//Calling the function to insert the element at the given position
-	insert_element(element, index, arr, size);
-	//printing the array after insertion
-	for( int i =0;i<size+1;i++)
-		printf("%d ",arr[i]);
+	int *arr= (int*)malloc(size*sizeof(int));  //dynamic memory allocation to the array
+	int *rank= (int*)malloc(size*sizeof(int));
+	int *arr1= (int*)malloc(size*sizeof(int));
+	int *rank1= (int*)malloc(size*sizeof(int));	
+	printf("Enter the elements of the array:");
+	//Taking input
+	//printf("Size: %d",size);  Debug statement
+	for(int i=0;i<size;i++){
+		scanf("%d",&arr[i]);
+		rank[i]=i;
+		//printf("scanning %d\n",i+1); Debug statement
+	}
+	quicksort(arr,rank,0,size-1); //Function call to quicksort
+	//printf("\nQuicksort Done !\n"); Debug Statement
+	int k=0;
+	for(int i=0;i<size;){
+		if(arr[i]==arr[i+1]){  //checking if the currect element is equal to the next element
+			int temp=arr[i];
+			while(arr[i]==temp && i<size)	//skipping all the elements that are equal to the current element
+				i++;
+		}
+		else{ //If the two adjacent elements are not equal then print the current element.
+			arr1[k]=arr[i];
+			rank1[k++]=rank[i];
+			i++;
+		}
+	}
+	if(k==0){
+		printf("No unique elements!");
+		return 0;
+	}
+	quicksort(rank1,arr1,0,k-1);
+	for(int i=0;i<k;i++)
+		printf("%d ",arr1[i]);
 	return 0;
+}
+//recursive function for quicksort, which takes an array as input and the boundary indices which are to be sorted
+void quicksort(int arr[],int rank[], int start, int end){
+	if(start<end){
+		int pivot= start; // taking the first element as the pivot everytime quicksort is called
+		int first=start; //this will be the running variable that will store the left bound during traversal
+		int last=end;   //this will be the running variable that will store the right bound during traversal
+		while(first<last){
+			while(arr[first]<=arr[pivot] && first<end) //skip all the elements starting at the beginning that are smaller than or equal to the pivot element
+				first++;
+			while(arr[last]>arr[pivot] )  //skip all the elements starting at the end that are greater than pivot element
+				last--;
+			if(first<last){
+				swap(arr,rank, first ,last); //swap the elements that first and the last index because the at this point of time the element at last is smaller than pivot and the one at first is larger than pivot element
+			}
+		}
+		swap(arr,rank,pivot,last); // swap in order to send pivot to its position
+		quicksort(arr,rank,start,last-1); //call quicksort for the left side of pivot elemet
+		quicksort(arr,rank,last+1,end); //call quicksort for the right side of the pivot element.
+		
+	}
+}
+//a function that takes an integer array as input and two indices, and swaps the values present at those indices in the array
+void swap(int arr[],int rank[], int index1, int index2){
+	int temp;
+	temp=arr[index1];
+	arr[index1]=arr[index2];
+	arr[index2]=temp;
+	temp=rank[index1];
+	rank[index1]=rank[index2];
+	rank[index2]=temp;
 }
