@@ -31,8 +31,7 @@ int main(){
 	printf("Element doesn't exist!");
     }
     else{
-    	printf("The required number is: %d\n",nthLargest(arr,size_new,n));
-	//printf("The required number is: %d\n",arr[size-n]);
+	printf("The required number is: %d\n",arr[size-n]);
     }
 
 }
