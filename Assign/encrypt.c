@@ -11,7 +11,7 @@ int main(int argc,const char* argv[]){
 	gets(str);
 	if(argc==1){
 		printf("The Encrypted number is: %s\n", encrypt(str));  //printing the encrptyed number
-		printf("The Decrypted number is: %s\n", decrypt(encrypt(str)));  //printing the decrypted number
+		printf("The Decrypted number is: %s\n", encrypt(str));  //printing the decrypted number
 		return 0;
 	}
 	else{
