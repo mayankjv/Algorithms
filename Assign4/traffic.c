@@ -1,6 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include<time.h>
+#include<pthread.h>
 
 
 static int cnt=0; //variable that maintains the count of unique IP addresses generated so far
