@@ -137,6 +137,8 @@ void *display(void *arg){
 		sleep(0.5);
 		struct node *buffer= (struct node*)arg;
 		for(int i =0;i<current;i++){
+			if(buffer[i].count==0)
+				continue;
 			printf("%d.%d.%d.%d has used %d packets\n",buffer[i].add1.subnet1,buffer[i].add1.subnet2,buffer[i].add.host1,buffer[i].add.host2,buffer[i].count);
 		}
 	}
