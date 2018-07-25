@@ -1,5 +1,4 @@
 #include<stdio.h>
-
 #include<stdlib.h>
 #include<pthread.h>
 #include<unistd.h>
@@ -47,14 +46,15 @@ struct node{
 struct ip generate_ip(struct ip random){
 	if(cnt==0){
 		random.s.subnet1=(rand()%255);
-		random.s.subnet2=(rand()%255);
+	random.s.subnet2=(rand()%255);
 	}
-	random.h.host1=(rand()%40);
-	if(random.h.host1==40){
+	random.h.host1=(rand()%255);
+	random.h.host2=(rand()%255);
+/*	if(random.h.host1==40){
 		random.h.host2=(rand()%15);
 	}
 	else
-		random.h.host2=(rand()%255);
+		random.h.host2=(rand()%255);*/
 	cnt++;
 	return random;
 }
@@ -88,7 +88,7 @@ void insert_ip(struct node lookup_table[], struct node buffer[],struct ip new_ip
         		buffer[free_pool[index-1]].next=NULL;    
         		buffer[free_pool[index-1]].last_active=time(NULL);
 			index--;
-			printf("\ninserted from free_pool!\n Current free_pool size: %d",index);		
+		//	printf("\ninserted from free_pool!\n Current free_pool size: %d",index);		
 		}
 		return ;
 	}
@@ -112,7 +112,7 @@ void insert_ip(struct node lookup_table[], struct node buffer[],struct ip new_ip
 	buffer[current].next=NULL;
 	buffer[current].prev=new;	
 	buffer[current++].last_active=time(NULL);
-	printf("\n Inserted\n");
+//	printf("\n Inserted\n");
 }
 
 
@@ -134,7 +134,6 @@ void *display(void *arg){
 
 	 */
 	while(1){	
-		sleep(0.5);
 		struct node *buffer= (struct node*)arg;
 		for(int i =0;i<current;i++){
 			if(buffer[i].count==0)
@@ -145,10 +144,13 @@ void *display(void *arg){
 }
 
 
-void cleanup(void *arg){
+void* cleanup(void *arg){
+
+int flag=0;
+while(1){
 	if(index>=10000){
-		printf("Free_pool Full!!!\n");
-		return;
+		//printf("Free_pool Full!!!\n");
+		break; 
 	}
 	struct node *buffer= (struct node*)arg;
 	for(int i=0;i<current;i++){
@@ -163,11 +165,17 @@ void cleanup(void *arg){
 			if(buffer[i].next!=NULL)
 				buffer[i].next->prev=buffer[i].prev;
         		free_pool[index++]=i;
-			if(index>=10000)
-				return;
-			printf("\n Node at index %d in the Buffer pool free.\n",current);
+			if(index>=10000){
+				flag=1;
+				break;
+			}
+		//	printf("\n Node at index %d in the Buffer pool free.\n",current);
 		}
 	}
+	if(flag==1){
+		break;
+	}
+}
 }
 
 
