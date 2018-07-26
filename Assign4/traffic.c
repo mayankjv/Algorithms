@@ -6,7 +6,7 @@
 static int cnt=0; //variable that maintains the count of unique IP addresses generated so far
 static int current=0; //variable that is used to know which index of the buffer pool is to be used as the new node
 static int index=0;//Index upto which elements are stored in the free_pool
-
+pthread_mutex_t lock;
 
 int free_pool[10000]; // an array that will store the indices of the buffer pool that are cleaned up.
 
@@ -35,6 +35,7 @@ struct node{
 	struct subnet add1;
 	int count;
 	time_t last_active;
+	time_t added;
 	struct node* next;
 	struct node* prev;
 };
@@ -46,7 +47,7 @@ struct node{
 struct ip generate_ip(struct ip random){
 	if(cnt==0){
 		random.s.subnet1=(rand()%255);
-	random.s.subnet2=(rand()%255);
+		random.s.subnet2=(rand()%255);
 	}
 	random.h.host1=(rand()%255);
 	random.h.host2=(rand()%255);
@@ -64,7 +65,7 @@ struct ip generate_ip(struct ip random){
 void insert_ip(struct node lookup_table[], struct node buffer[],struct ip new_ip){
 	if(current>=10000){
 		if(index<=0){
-			printf("\nCannot be allocated!!\n");
+			//printf("\nCannot be allocated!!\n");
 			return;
 		}
 		else{
@@ -73,6 +74,7 @@ void insert_ip(struct node lookup_table[], struct node buffer[],struct ip new_ip
         		while(new->next!=NULL){
                			if(new->add.host1==new_ip.h.host1 && new->add.host2==new_ip.h.host2){
                        			(new->count)++;
+					new->last_active=time(NULL);
                        			return;
                			}
                			pre=new;
@@ -87,6 +89,7 @@ void insert_ip(struct node lookup_table[], struct node buffer[],struct ip new_ip
         		new->prev=pre;
         		buffer[free_pool[index-1]].next=NULL;    
         		buffer[free_pool[index-1]].last_active=time(NULL);
+			buffer[free_pool[index-1]].added=time(NULL);
 			index--;
 		//	printf("\ninserted from free_pool!\n Current free_pool size: %d",index);		
 		}
@@ -97,6 +100,7 @@ void insert_ip(struct node lookup_table[], struct node buffer[],struct ip new_ip
 	while(new->next!=NULL){
 		if(new->add.host1==new_ip.h.host1 && new->add.host2==new_ip.h.host2){
 			(new->count)++;
+			new->last_active= time(NULL);
 			return;
 		}
 		pre=new;
@@ -111,7 +115,8 @@ void insert_ip(struct node lookup_table[], struct node buffer[],struct ip new_ip
 	new->prev=pre;
 	buffer[current].next=NULL;
 	buffer[current].prev=new;	
-	buffer[current++].last_active=time(NULL);
+	buffer[current].last_active=time(NULL);
+	buffer[current++].added= time(NULL);
 //	printf("\n Inserted\n");
 }
 
@@ -133,6 +138,7 @@ void *display(void *arg){
 		}
 
 	 */
+	pthread_mutex_lock(&lock);
 	while(1){	
 		struct node *buffer= (struct node*)arg;
 		for(int i =0;i<current;i++){
@@ -141,15 +147,17 @@ void *display(void *arg){
 			printf("%d.%d.%d.%d has used %d packets\n",buffer[i].add1.subnet1,buffer[i].add1.subnet2,buffer[i].add.host1,buffer[i].add.host2,buffer[i].count);
 		}
 	}
+	pthread_mutex_unlock(&lock);
 }
 
 
 void* cleanup(void *arg){
 
-int flag=0;
+pthread_mutex_lock(&lock);
 while(1){
 	if(index>=10000){
 		//printf("Free_pool Full!!!\n");
+		pthread_mutex_unlock(&lock);
 		break; 
 	}
 	struct node *buffer= (struct node*)arg;
@@ -166,16 +174,15 @@ while(1){
 				buffer[i].next->prev=buffer[i].prev;
         		free_pool[index++]=i;
 			if(index>=10000){
-				flag=1;
+				pthread_mutex_unlock(&lock);
 				break;
 			}
-		//	printf("\n Node at index %d in the Buffer pool free.\n",current);
+			
+		//	printf("\n Node at index %d in the Buffer pool free       Life=%d\n",current,(int)difftime(time(NULL),buffer[i].added));
 		}
 	}
-	if(flag==1){
-		break;
-	}
 }
+pthread_mutex_unlock(&lock);
 }
 
 
@@ -194,13 +201,14 @@ int main(){
 	int subnet=16;
 //	scanf("%d",&subnet);
         struct node lookup_table[(power(subnet))];
-	pthread_t pth;
+	pthread_t pth,clean;
+	pthread_create(&clean,NULL,cleanup,(void *)buffer);
 	pthread_create(&pth,NULL,display,(void *)buffer);
-//	pthread_create(&clean,NULL,cleanup,(void *)buffer);
 	while(1){
+		sleep(0.5);
 		temp = generate_ip(temp);
 		insert_ip(lookup_table,buffer,temp);	
-		cleanup((void *) buffer);	
+//		cleanup((void *) buffer);	
 	}
 	return 0;
 }
