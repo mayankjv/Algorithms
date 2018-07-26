@@ -1,3 +1,7 @@
+// This program includes representing a binary search tree using an array and implement all the functions: insert, delete, in-order, pre-order, and post-order traversal.
+// The approach uses a structure which stores: The value of an element, The index of the left child of that element and the index of the right child of that element.
+// The binary search tree is represented as an array of structures.
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -7,6 +11,8 @@ struct node{
     int right;
 };
 static int current=0;
+
+int display_menu();
 
 void insert(struct node* root, int num){
     if(current == 0){
@@ -32,7 +38,11 @@ void insert(struct node* root, int num){
                 return;
             }
         }
-        root = (struct node*)realloc(root, sizeof(struct node));
+        root = (struct node*)realloc(root, (current+1)*sizeof(struct node));
+	if(root==NULL){
+		printf("Memory can not be alloted!");
+		return ;
+	}
         root[current].value = num;
         root[current].left = -1;
         root[current].right = -1;
@@ -96,19 +106,17 @@ void postorder(struct node* root, int index){
 }
 
 int main() {
-	// your code goes here
 	int choice=0;
 	struct node* root = (struct node *)malloc(sizeof(struct node));
 	root[0].value = root[0].left = root[0].right = -1;
 	int temp=0;
 	do{
-		printf("Choose 1. To Insert, 2. Inorder Traversal, 3. Exit: ");
-		scanf("%d", &choice);
+		choice=display_menu();
 		switch (choice){
 	    	case 1:
 	        	temp=0;
 	        	printf("\nEnter a number to insert: ");
-	    	    scanf("%d",&temp);
+	    	    	scanf("%d",&temp);
 	        	insert(root,temp);
 	 	       	break;
      	   
@@ -121,4 +129,13 @@ int main() {
 		display(root);
 	}while(1);
 	return 0;
+}
+
+//a function to display the menu and take user choice, and return the choice of the user.
+int display_menu(){
+	int choice=0;
+        printf("1. Insert\n2. Delete\n3. In-order Traversal\n4. Pre-order Traversal\n5. Post-order Traversal\n6. Exit\n\n");
+        printf("Enter your choice: ");
+	scanf("%d",&choice);
+	return choice;
 }
