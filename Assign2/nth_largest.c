@@ -9,8 +9,8 @@ the algorithm used for the same is a slight optimisation of heap sort */
 void Heapify(int a[],int size, int curr); 
 void swap(int arr[], int idx1, int idx2);
 void quicksort(int arr[], int start, int end);
-void buildMinHeap(int arr[],int size);
-int nthLargest(int arr[],int size,int n);
+//void buildMinHeap(int arr[],int size);
+//int nthLargest(int arr[],int size,int n);
 int remove_duplicates(int arr[], int size);
 
 int main(){
@@ -66,7 +66,7 @@ void swap(int arr[], int idx1, int idx2){
 }
 
 //This function takes an array, its size and the current as input and minimum heapyfies the arr
-void Heapify(int arr[], int size, int curr)
+/*void Heapify(int arr[], int size, int curr)
 {
     int left = 2*curr; //left child
     int right = 2*curr+1; //right child
@@ -113,7 +113,7 @@ int nthLargest(int arr[], int size, int n)
     return minHeap[0];
 }
 
-
+*/
 
 
 
