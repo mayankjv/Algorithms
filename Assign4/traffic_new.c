@@ -9,6 +9,7 @@ static int index=0;//Index upto which elements are stored in the free_pool
 pthread_mutex_t lock;
 
 int BUFFER_SIZE=0;
+int print_interval=0;
 
 int *free_pool; // an array that will store the indices of the buffer pool that are cleaned up.
 
@@ -151,7 +152,7 @@ void *display(void *arg){
 			printf("%d.%d.%d.%d has used %d packets\n",buffer[i].add1.subnet1,buffer[i].add1.subnet2,buffer[i].add.host1,buffer[i].add.host2,buffer[i].count);
 		}
 		pthread_mutex_unlock(&lock);
-		sleep(2);
+		sleep(print_interval);
 	}
 	
 }
@@ -229,6 +230,8 @@ int main(){
 	scanf("%d",&n);
 	printf("\n1. Same Subnet, Different Hosts\n2.Random IPs\nEnter Choice: ");
 	scanf("%d",&choice);
+	printf("Enter Print Interval: ");
+	scanf("%d",&print_interval);
         struct node lookup_table[(power(subnet))];
 	pthread_t pth,clean;
 	pthread_create(&clean,NULL,cleanup,(void *)buffer);
