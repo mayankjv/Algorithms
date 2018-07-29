@@ -127,7 +127,7 @@ void postorder(struct node* root, int index){
 			inorder(root, root[index].left);
 		}
 		if(root[index].right != -1){
-			inorder(root, root[index].right);
+			inorder(root, root[index]a.right);
 		}
 		printf("  %d  ", root[index].value);
 	}
@@ -243,7 +243,7 @@ int main() {
 	root[0].value = root[0].left = root[0].right = -1;
 	int temp=0, element;
 	do{
-		printf("\nChoose 1. To Insert, 2. Inorder Traversal, 3. Preorder Traversal, 4. Postorder Traversal, 5. Delete Element, 6. Exit: ");
+		printf("\n1. Insert\n2. Inorder Traversal\n3. Preorder Traversal\n4. Postorder Traversal\n5. Delete\n6. Exit\nChoose an Option:");
 		scanf("%d", &choice);
 		switch (choice){
 	    		case 1:
@@ -256,21 +256,22 @@ int main() {
      			case 2:
      	   			inorder(root, 0);
      	   			break;
-			case 3:
-     	   			preorder(root, 0);
-     	   			break;
-     		
-			case 4:
-     	   			postorder(root, 0);
-     	   			break;
-     	   	
-			case 5:
-				printf("\nEnter an element to delete it from BST: ");
-				scanf("%d", &element);
-				delete_element(root, element, 0, 0, 2);
-				break;		
-     	    		case 6:
-        		    return 0;
+			    case 3:
+     	   	    		preorder(root, 0);
+     	   	    		break;
+			    case 4:
+     	   	    		postorder(root, 0);
+     	   	    		break;
+			    case 5:
+			    	    printf("\nEnter an element to delete it from BST: ");
+			        	scanf("%d", &element);
+			         	delete_element(root, element, 0, 0, 2);
+			    	    break;		
+     	    	case 6:
+        		        return 0;
+        		default:
+        		        printf("Invalid Option!!");
+        		        return 0;
 		}
 		display(root);
 		printf("\n");
