@@ -1,70 +1,98 @@
-// This program includes representing a binary search tree using an array and implement all the functions: insert, delete, in-order, pre-order, and post-order traversal.
-// The approach uses a structure which stores: The value of an element, The index of the left child of that element and the index of the right child of that element.
-// The binary search tree is represented as an array of structures.
-
 #include <stdio.h>
 #include <stdlib.h>
 
+/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+
+//Structure for the node of BST
 struct node{
     int value;
     int left;
     int right;
 };
-static int current=0;
 
-int display_menu();
+static int current=0, space_free = 0;
 
+//Definition of function to insert elements to the BST
 void insert(struct node* root, int num){
-    if(current == 0){
-        root[current].value = num;
-        root[current].left = -1;
-        root[current].right = -1;
-    }
-    else{
-	    int branch = 0, index = 0, lr = 2;
-        while(branch != -1){
-            if(num < root[branch].value){
-                index = branch;
-                branch = root[branch].left;
-                lr = 0;
-            }
-            else if(num > root[branch].value){
-                index = branch;
-                branch = root[branch].right;
-                lr = 1;
-            }
-            else{
-                printf("Number is already present, %d can not be inserted\n", num);
-                return;
-            }
-        }
-        root = (struct node*)realloc(root, (current+1)*sizeof(struct node));
-	if(root==NULL){
-		printf("Memory can not be alloted!");
-		return ;
-	}
-        root[current].value = num;
-        root[current].left = -1;
-        root[current].right = -1;
+    if(space_free == 0){
+    	if(current == 0){
+        	root[current].value = num;
+	        root[current].left = -1;
+    	    root[current].right = -1;
+    	}
+    	else{
+	    	int branch = 0, index = 0, lr = 2;
+       		while(branch != -1){
+        	    if(num < root[branch].value){
+            	    index = branch;
+                	branch = root[branch].left;
+                	lr = 0;
+            	}
+            	else if(num > root[branch].value){
+            	    index = branch;
+            	    branch = root[branch].right;
+            	    lr = 1;
+            	}
+            	else{
+                	printf("\nNumber is already present, %d can not be inserted", num);
+                	return;
+            	}
+        	}
+        	root = (struct node*)realloc(root, sizeof(struct node));
+        	root[current].value = num;
+        	root[current].left = -1;
+        	root[current].right = -1;
         
-        if(lr == 0){
-            root[index].left = current;
-        }
-        else if(lr == 1)
-            root[index].right = current;
-    }
-    current++;
+        	if(lr == 0){
+            	root[index].left = current;
+        	}
+        	else if(lr == 1)
+            	root[index].right = current;
+    	}
+    	current++;
+	}
+	else{
+		int branch = 0, index = 0, lr = 2;
+       		while(branch != -1){
+        	    if(num < root[branch].value){
+            	    index = branch;
+                	branch = root[branch].left;
+                	lr = 0;
+            	}
+            	else if(num > root[branch].value){
+            	    index = branch;
+            	    branch = root[branch].right;
+            	    lr = 1;
+            	}
+            	else{
+                	printf("\nNumber is already present, %d can not be inserted", num);
+                	return;
+            	}
+        	}
+        	root[current-space_free].value = num;
+        	root[current-space_free].left = -1;
+        	root[current-space_free].right = -1;
+        
+        	if(lr == 0){
+            	root[index].left = current-space_free;
+        	}
+        	else if(lr == 1)
+            	root[index].right = current-space_free;
+		space_free--;
+	}
 }
 
+//Definition of function to display content of BST
 void display(struct node* root){
 	int i;
-	for(i=0; i<current; i++){
-		printf("Value = %d \t Left = %d \t Right = %d\n", root[i].value, root[i].left, root[i].right);
+	for(i=0; i<current-space_free; i++){
+		printf("\nValue = %d \t Left = %d \t Right = %d", root[i].value, root[i].left, root[i].right);
 	}
 }
 
+//Definition of function for printing In-Order Traversal
 void inorder(struct node* root, int index){
-	if(current != 0){
+	if(current-space_free != 0){
 		if(root[index].left != -1){
 			inorder(root, root[index].left);
 		}
@@ -74,11 +102,12 @@ void inorder(struct node* root, int index){
 		}
 	}
 	else
-		printf("BST is Empty");
+		printf("\nBST is Empty");
 }
 
+//Definition of function for printing Pre-Order Traversal
 void preorder(struct node* root, int index){
-	if(current != 0){
+	if(current-space_free != 0){
 		printf("  %d  ", root[index].value);
 		if(root[index].left != -1){
 			inorder(root, root[index].left);
@@ -88,11 +117,12 @@ void preorder(struct node* root, int index){
 		}
 	}
 	else
-		printf("BST is Empty");
+		printf("\nBST is Empty");
 }
 
+//Definition of function for printing Post-Order Traversal
 void postorder(struct node* root, int index){
-	if(current != 0){
+	if(current-space_free != 0){
 		if(root[index].left != -1){
 			inorder(root, root[index].left);
 		}
@@ -102,40 +132,150 @@ void postorder(struct node* root, int index){
 		printf("  %d  ", root[index].value);
 	}
 	else
-		printf("BST is Empty");
+		printf("\nBST is Empty");
+}
+
+//Definition of function for finding Maximum Value from left sub-tree of a node
+int leftMax(struct node* root, int branch){
+	int index = 0;
+	int leftmax = root[branch].left;
+	while(leftmax != -1){
+		index = leftmax;
+		leftmax = root[leftmax].right;
+	}
+	return index;
+}
+
+//Definition of function for finding Minimum Value from right sub-tree of a node
+int rightMin(struct node* root, int branch){	
+	int index = 0;
+	int rightmin = root[branch].right;
+	while(rightmin != -1){
+		index = rightmin;
+		rightmin = root[rightmin].left;
+	}
+	return index;
+}
+
+//Definition of function to shift and adjust the data elements of BST after deletion of element
+void shift(struct node* root, int index){
+	int i;
+	int element;
+	element = current - space_free -2; //  element = current - space_free - 1;
+	for(i=0; i<element; i++){
+		if(i < index){
+			if(root[i].left == index){
+				root[i].left = -1;
+			}
+			if(root[i].right == index){
+				root[i].right = -1;
+			}
+			if(root[i].left > index){
+				root[i].left--;
+			}
+			if(root[i].right > index){
+				root[i].right--;
+			}
+
+		}
+		else{
+			root[i].value = root[i+1].value;
+			root[i].left = root[i+1].left;
+			root[i].right = root[i+1].right;
+		}
+	}
+}
+
+//Definition of function for deleting element from binary search tree
+void delete_element(struct node* root, int element, int branch, int index, int lr)
+{
+	if(root[branch].value == element){
+		printf("Element Found: %d", element);
+		if(root[branch].left == -1 && root[branch].right == -1){
+			if(lr = 0)
+				root[index].left = -1;
+			else if(lr = 1)
+				root[index].right = -1;
+			shift(root, index);
+			space_free++;
+		}
+		else if(root[branch].left != -1 && root[branch].right == -1){
+			int index_left_max = leftMax(root, branch);
+			root[branch].value = root[index_left_max].value;
+			shift(root, index_left_max);
+			space_free++;
+		}
+		else if(root[branch].left == -1 && root[branch].right != -1){
+			int index_right_min = rightMin(root, branch);
+			root[branch].value = root[index_right_min].value;
+			shift(root, index_right_min);
+			space_free++;
+		}
+		else if(root[branch].left != -1 && root[branch].right != -1){ 
+			int index_right_min = rightMin(root, branch);
+			root[branch].value = root[index_right_min].value;
+			shift(root, index_right_min);
+			space_free++;
+		}
+		printf("Element is deleted from BST");
+	}
+	else if(element < root[branch].value && root[branch].left != -1){
+		index = branch;
+		branch = root[branch].left;
+		lr = 0;
+		delete_element(root, element, branch, index, lr);
+	}
+	else if(element > root[branch].value && root[branch].right != -1){
+		index = branch;
+		branch = root[branch].right;
+		lr = 1;
+		delete_element(root, element, branch, index, lr);
+	}
+	else{
+		printf("\nElement is not present");
+	}
 }
 
 int main() {
 	int choice=0;
-	struct node* root = (struct node *)malloc(sizeof(struct node));
+	struct node* root = NULL;
+	root = (struct node*)malloc(sizeof(struct node));
 	root[0].value = root[0].left = root[0].right = -1;
-	int temp=0;
+	int temp=0, element;
 	do{
-		choice=display_menu();
+		printf("\nChoose 1. To Insert, 2. Inorder Traversal, 3. Preorder Traversal, 4. Postorder Traversal, 5. Delete Element, 6. Exit: ");
+		scanf("%d", &choice);
 		switch (choice){
-	    	case 1:
-	        	temp=0;
-	        	printf("\nEnter a number to insert: ");
-	    	    	scanf("%d",&temp);
-	        	insert(root,temp);
-	 	       	break;
-     	   
-     	   case 2:
-     	   		inorder(root, 0);
-     	   		
-     	   case 3:
-        	    return 0;
+	    		case 1:
+	        		temp=0;
+	        		printf("\nEnter a number to insert: ");
+	    		    	scanf("%d", &temp);
+	        		insert(root, temp);
+	 	       		break;
+    		
+     			case 2:
+     	   			inorder(root, 0);
+     	   			break;
+			case 3:
+     	   			preorder(root, 0);
+     	   			break;
+     		
+			case 4:
+     	   			postorder(root, 0);
+     	   			break;
+     	   	
+			case 5:
+				printf("\nEnter an element to delete it from BST: ");
+				scanf("%d", &element);
+				delete_element(root, element, 0, 0, 2);
+				break;		
+     	    		case 6:
+        		    return 0;
 		}
 		display(root);
+		printf("\n");
 	}while(1);
+	free(root);
+	root = NULL;
 	return 0;
-}
-
-//a function to display the menu and take user choice, and return the choice of the user.
-int display_menu(){
-	int choice=0;
-        printf("1. Insert\n2. Delete\n3. In-order Traversal\n4. Pre-order Traversal\n5. Post-order Traversal\n6. Exit\n\n");
-        printf("Enter your choice: ");
-	scanf("%d",&choice);
-	return choice;
 }
