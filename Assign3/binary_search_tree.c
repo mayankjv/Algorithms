@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* run this program using the console pauser or add your own getch, system("pause") or input loop */
 
 //Structure for the node of BST
 struct node{
@@ -12,7 +11,7 @@ struct node{
 
 static int current=0, space_free = 0;
 
-//Definition of function to insert elements to the BST
+//defination of function to insert elements to the BST
 void insert(struct node* root, int num){
     if(space_free == 0){
     	if(current == 0){
@@ -82,7 +81,7 @@ void insert(struct node* root, int num){
 	}
 }
 
-//Definition of function to display content of BST
+//defination of function to display content of BST
 void display(struct node* root){
 	int i;
 	for(i=0; i<current-space_free; i++){
@@ -90,7 +89,7 @@ void display(struct node* root){
 	}
 }
 
-//Definition of function for printing In-Order Traversal
+//defination of function for printing In-Order Traversal
 void inorder(struct node* root, int index){
 	if(current-space_free != 0){
 		if(root[index].left != -1){
@@ -105,7 +104,7 @@ void inorder(struct node* root, int index){
 		printf("\nBST is Empty");
 }
 
-//Definition of function for printing Pre-Order Traversal
+//defination of function for printing Pre-Order Traversal
 void preorder(struct node* root, int index){
 	if(current-space_free != 0){
 		printf("  %d  ", root[index].value);
@@ -120,14 +119,14 @@ void preorder(struct node* root, int index){
 		printf("\nBST is Empty");
 }
 
-//Definition of function for printing Post-Order Traversal
+//defination of function for printing Post-Order Traversal
 void postorder(struct node* root, int index){
 	if(current-space_free != 0){
 		if(root[index].left != -1){
 			inorder(root, root[index].left);
 		}
 		if(root[index].right != -1){
-			inorder(root, root[index]a.right);
+			inorder(root, root[index].right);
 		}
 		printf("  %d  ", root[index].value);
 	}
@@ -135,7 +134,7 @@ void postorder(struct node* root, int index){
 		printf("\nBST is Empty");
 }
 
-//Definition of function for finding Maximum Value from left sub-tree of a node
+//defination of function for finding Maximum Value from left sub-tree of a node
 int leftMax(struct node* root, int branch){
 	int index = 0;
 	int leftmax = root[branch].left;
@@ -146,7 +145,7 @@ int leftMax(struct node* root, int branch){
 	return index;
 }
 
-//Definition of function for finding Minimum Value from right sub-tree of a node
+//defination of function for finding Minimum Value from right sub-tree of a node
 int rightMin(struct node* root, int branch){	
 	int index = 0;
 	int rightmin = root[branch].right;
@@ -161,7 +160,7 @@ int rightMin(struct node* root, int branch){
 void shift(struct node* root, int index){
 	int i;
 	int element;
-	element = current - space_free -2; //  element = current - space_free - 1;
+	element = current - space_free - 1;
 	for(i=0; i<element; i++){
 		if(i < index){
 			if(root[i].left == index){
@@ -176,9 +175,8 @@ void shift(struct node* root, int index){
 			if(root[i].right > index){
 				root[i].right--;
 			}
-
 		}
-		else{
+		else if(i >= index){
 			root[i].value = root[i+1].value;
 			root[i].left = root[i+1].left;
 			root[i].right = root[i+1].right;
@@ -186,36 +184,90 @@ void shift(struct node* root, int index){
 	}
 }
 
-//Definition of function for deleting element from binary search tree
+void shift_between(struct node* root, int index){
+	int i;
+	int element;
+	element = current - space_free - 1;
+	for(i=0; i<element; i++){
+		if(i < index){
+			if(root[i].left > index){
+				root[i].left--;
+			}
+			if(root[i].right > index){
+				root[i].right--;
+			}
+		}
+		else if(i >= index){
+			root[i].value = root[i+1].value;
+			root[i].left = root[i+1].left;
+			root[i].right = root[i+1].right;
+		}
+	}
+}
+
+//defination of function for deleting element from binary search tree
 void delete_element(struct node* root, int element, int branch, int index, int lr)
 {
 	if(root[branch].value == element){
-		printf("Element Found: %d", element);
+		printf("Element Found: %d\n", element);
 		if(root[branch].left == -1 && root[branch].right == -1){
-			if(lr = 0)
+			if(lr == 0)
 				root[index].left = -1;
-			else if(lr = 1)
+			else if(lr == 1)
 				root[index].right = -1;
-			shift(root, index);
+			shift(root, branch);
 			space_free++;
 		}
 		else if(root[branch].left != -1 && root[branch].right == -1){
-			int index_left_max = leftMax(root, branch);
-			root[branch].value = root[index_left_max].value;
-			shift(root, index_left_max);
-			space_free++;
+			if(root[root[branch].left].right == -1){
+				int index_left_max = root[branch].left;
+				root[branch].value = root[index_left_max].value;
+				if(root[index_left_max].left == -1){
+					root[branch].left = -1;
+				}
+				shift_between(root, index_left_max);
+				space_free++;
+			}
+			else{
+				int index_left_max = leftMax(root, branch);
+				root[branch].value = root[index_left_max].value;
+				shift(root, index_left_max);
+				space_free++;
+			}
 		}
 		else if(root[branch].left == -1 && root[branch].right != -1){
-			int index_right_min = rightMin(root, branch);
-			root[branch].value = root[index_right_min].value;
-			shift(root, index_right_min);
-			space_free++;
+			if(root[root[branch].right].left == -1){
+				int index_right_min = root[branch].right;
+				root[branch].value = root[index_right_min].value;
+				if(root[index_right_min].right == -1){
+					root[branch].right = -1;
+				}
+				shift_between(root, index_right_min);
+				space_free++;
+			}
+			else{
+				int index_right_min = rightMin(root, branch);
+				root[branch].value = root[index_right_min].value;
+				shift(root, index_right_min);
+				space_free++;
+			}
 		}
 		else if(root[branch].left != -1 && root[branch].right != -1){ 
-			int index_right_min = rightMin(root, branch);
-			root[branch].value = root[index_right_min].value;
-			shift(root, index_right_min);
-			space_free++;
+			if(root[root[branch].right].left == -1){
+				int index_right_min = root[branch].right;
+				root[branch].value = root[index_right_min].value;
+				if(root[index_right_min].right == -1){
+					root[branch].right = -1;
+				}
+				shift_between(root, index_right_min);
+				space_free++;
+			}
+			else{
+				int index_right_min = rightMin(root, branch);
+				root[branch].value = root[index_right_min].value;
+				shift(root, index_right_min);
+				space_free++;
+			}
 		}
 		printf("Element is deleted from BST");
 	}
@@ -243,40 +295,41 @@ int main() {
 	root[0].value = root[0].left = root[0].right = -1;
 	int temp=0, element;
 	do{
-		printf("\n1. Insert\n2. Inorder Traversal\n3. Preorder Traversal\n4. Postorder Traversal\n5. Delete\n6. Exit\nChoose an Option:");
+		printf("\nChoose 1. To Insert, 2. Inorder Traversal, 3. Preorder Traversal, 4. Postorder Traversal, 5. Delete Element, 6. Exit: ");
 		scanf("%d", &choice);
 		switch (choice){
-	    		case 1:
-	        		temp=0;
-	        		printf("\nEnter a number to insert: ");
-	    		    	scanf("%d", &temp);
-	        		insert(root, temp);
-	 	       		break;
+	    	case 1:
+	        	temp=0;
+	        	printf("\nEnter a number to insert: ");
+	    	    scanf("%d", &temp);
+	        	insert(root, temp);
+	 	       	break;
     		
-     			case 2:
-     	   			inorder(root, 0);
-     	   			break;
-			    case 3:
-     	   	    		preorder(root, 0);
-     	   	    		break;
-			    case 4:
-     	   	    		postorder(root, 0);
-     	   	    		break;
-			    case 5:
-			    	    printf("\nEnter an element to delete it from BST: ");
-			        	scanf("%d", &element);
-			         	delete_element(root, element, 0, 0, 2);
-			    	    break;		
-     	    	case 6:
-        		        return 0;
-        		default:
-        		        printf("Invalid Option!!");
-        		        return 0;
+     		case 2:
+     	   		inorder(root, 0);
+     	   		break;
+     		
+			case 3:
+     	   		preorder(root, 0);
+     	   		break;
+     		
+			case 4:
+     	   		postorder(root, 0);
+     	   		break;
+     	   	
+			case 5:
+				printf("\nEnter an element to delete it from BST: ");
+				scanf("%d", &element);
+				delete_element(root, element, 0, 0, 2);
+				break;
+					
+     	    case 6:
+        	    return 0;
 		}
 		display(root);
 		printf("\n");
 	}while(1);
-	free(root);
+	free( root );
 	root = NULL;
 	return 0;
 }
