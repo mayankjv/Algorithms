@@ -2,14 +2,14 @@
 #include<string.h>
 #include "INI_Parser.h"
 
-int INI_Parser :: read_from_config(char* config_line) {
+int INI_Parser::read_from_config(char* config_line) {
 	char prm_name[30];
 	int val;
     	sscanf(config_line, "%s %d\n", prm_name, &val);
     	return val;
 }
 
-void INI_Parser :: parse_config_file(char* config_filename) {
+void INI_Parser::parse_config_file(char* config_filename) {
   	char buf[100];
    	if ((fp=fopen(config_filename, "r")) == NULL) {
   	     	fprintf(stderr, "Failed to open config file %s", config_filename);
@@ -21,16 +21,19 @@ void INI_Parser :: parse_config_file(char* config_filename) {
         	if (buf[0] == '#' || strlen(buf) < 4) {
             		continue;
         	}
-		else if (buf[0]!='['){
+/*		else if (buf[0]!='['){
 			int i=1;
 			while(buf[0]=']'){
 				sec[i-1]=buf[i];
 			}	
 		}
+*/
   	 	else if (strstr(buf, "BUFFER_SIZE ")) {
+			//printf("Current Entry: %d\n",current_entries);
 			strcpy(config_parameter[current_entries].section,sec);
 			strcpy(config_parameter[current_entries].key,"BUFFER_SIZE");
        		     	config_parameter[current_entries].value = read_from_config(buf);
+			//printf("\n\n%d\n\n",config_parameter[current_entries].value);
 			current_entries++;
        		 }
   	 	 else if (strstr(buf, "IP_GENERATION_INTERVAL ")) {
@@ -76,5 +79,7 @@ void INI_Parser :: parse_config_file(char* config_filename) {
 			current_entries++;
         	}
     	}
+	config_parameter[current_entries].value = -1;
+	fclose(fp);
     	return;
 }
