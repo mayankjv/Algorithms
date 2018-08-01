@@ -1,11 +1,15 @@
+//This program counts the number of packets used by each IP over a network, and takes input parameters
+//from an INI file whose name is passed as a Command Line Parameter.
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<pthread.h>
 #include<unistd.h>
 #include<string.h>
 
-
+//length is parameter name in the configuration file
 #define MAX_CONFIG_VARIABLE_LEN 25
+//buffer lenght in which each line of confg file is to be stored
 #define CONFIG_LINE_buffer_len 100
 
 
@@ -146,7 +150,7 @@ void insert_ip(struct node lookup_table[], struct node buffer[],struct ip new_ip
 
 
 
-
+//A separate thread that displays the status of the buffer at regular intervals
 void *display(void *arg){
     FILE *fp;
     char file_name[50];
@@ -170,7 +174,7 @@ void *display(void *arg){
 }
 
 
-
+// funtion that is being run as a separate thread and is used to clean off an IP from the buffer pool if it is old enough.
 void* cleanup(void *arg){
 	printf("Cleanup Thread Active Now !!\n");
 	while(1){
@@ -210,6 +214,7 @@ void* cleanup(void *arg){
 int ch=0;
 int ch1=0;
 
+//Function that generates IPs belonging to same subnet
 struct ip same_subnet(struct ip random){
 	if(ch1==0){
 		random.h.host1=(rand()%255);
@@ -221,6 +226,8 @@ struct ip same_subnet(struct ip random){
 	return random;
 	
 }
+
+//Function that generates IP sequentially
 struct ip seq_ip(struct ip seq){
     if(ch==0){
         seq.s.subnet1=0;
@@ -238,6 +245,8 @@ struct ip seq_ip(struct ip seq){
     return seq;
 }
 
+
+//Funtion that calculates powers of 2
 int power(int num){
 	int res=1;
 	for(int i=0;i<num;i++)
@@ -245,6 +254,8 @@ int power(int num){
 	return res;
 }
 
+
+//Function to read a single line in the configuration file
 int read_from_config(char* config_line) {
     char prm_name[MAX_CONFIG_VARIABLE_LEN];
     int val;
@@ -253,7 +264,7 @@ int read_from_config(char* config_line) {
 }
 
 
-
+//Funciton that is responsible for reading the configuration file line by line
 void read_config_file(char* config_filename) {
     FILE *fp;
     char buf[CONFIG_LINE_buffer_len];
@@ -299,7 +310,7 @@ void read_config_file(char* config_filename) {
 
 
 
-
+//Main funtion
 int main(int argc, char *argv[]){
 	struct ip temp;
 	int arr[buffer_len];
