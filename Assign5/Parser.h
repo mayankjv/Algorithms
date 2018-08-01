@@ -2,6 +2,7 @@
 #define PARSER_INCLUDE
 
 
+
 struct param{
 	
 	char section[30];
@@ -12,17 +13,22 @@ struct param{
 
 class PARSER{
 
-	private:
+
+	protected:
 		struct param config_parameter[25];
-		FILE *fp;
 		
 	public:
-	
-	int get_int_value(char* section_name ,char* param_name);
-	virtual void parse_config_file(char* config_filename);
-	//int read_from_config(char* config_line);
-	void close();
+		int get_int_value(char* param_name);
+		virtual void parse_config_file(char* config_filename)=0;
+//		int read_from_config(char* config_line);
+//		void close();
 
 };
 
+class Factory{
+
+	public:
+		PARSER *getParser(char* file_name);
+
+};
 #endif
