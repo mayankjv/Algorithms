@@ -1,10 +1,6 @@
-import java.io.IOException;
 import java.util.*;
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.nio.file.SimpleFileVisitor;
 
 
 
@@ -158,7 +154,7 @@ class DirectoryFile{
 	}
 
 	public void print_file(){
-		System.out.println("File Name: "+name+"\tExtension: "+type+"\tWords: "+words+"\tLines: "+lines+"\tLast Modified: "+last_modified);
+		System.out.println("File Name: "+name+"\tExtension: "+type+"\tWords: "+words+"\tLines: "+lines+"\tLast Modified: "+last_modified+"\tSize: "+size);
 	}
 
 
@@ -180,9 +176,19 @@ class NameComparator implements Comparator<DirectoryFile>{
 class SizeComparator implements Comparator<DirectoryFile>{
 
 	public int compare(DirectoryFile file1, DirectoryFile file2){
-		return file1.get_size-file2.get_size;
+		return (int)(file1.get_size()-file2.get_size());
 	}
 }
+
+
+class LastModifiedComparator implements Comparator<DirectoryFile>{
+
+	public int compare(DirectoryFile file1, DirectoryFile file2){
+		return (int)(file2.get_size()-file1.get_size());
+	}
+}
+
+
 
 
 public class FileStatistics{
@@ -259,31 +265,125 @@ public class FileStatistics{
 				System.out.println("Enter a valid Integer!!");
 				return;
 			}
-			if(choice==1){
+			if(choice == 1){
 				CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
 				for(DirectoryFile f: temp)
 				f.print_file();
 			}			
-			else if(choice==2){
+			else if(choice == 2){
 				System.out.println("1. By Name\n2. By Last Modified\n3. By Size");
 				int ch = sc.nextInt();
+				CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
 				switch(ch){
 					case 1:
-							Collections.sort(path.get_files(), new NameComparator());
-							CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
+							Collections.sort(temp, new NameComparator());
 							for(DirectoryFile f: temp)
 								f.print_file();
 
 							break;
 					case 2:
+							Collections.sort(temp, new LastModifiedComparator());
+							//CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
+							for(DirectoryFile f: temp)
+								f.print_file();
+
 							break;
 					case 3:
+							Collections.sort(temp, new SizeComparator());
+							//CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
+							for(DirectoryFile f: temp)
+								f.print_file();
+
 							break;
 					default:
 							break;
 				}
 			}
+			else if(choice == 3){
+				CopyOnWriteArrayList<DirectoryFile> search_results = new CopyOnWriteArrayList<DirectoryFile>();
+				CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
+				System.out.println("1. By Name\n2. By Size");
+				int ch = sc.nextInt();
+				switch(ch){
+					case 1:
+							System.out.println("Enter Search string: ");
+							String pattern= sc.next();
+							KMPSearch obj= new KMPSearch();
+							for(int i=0;i<temp.size();i++){
+								int[] arr= obj.kmp(temp.get(i).get_file_name().toCharArray(), pattern.toCharArray());
+								if(arr.length!=0){
+									search_results.add(temp.get(i));
+								}
+							}
+							for(DirectoryFile f: search_results)
+								f.print_file();
+							break;
+					case 2:
+							break;
+					default:
+							break;
+				}
+
+			}
 			//System.out.println(choice);
 //		}
 	}
+}
+
+
+
+
+
+
+
+
+
+class KMPSearch{
+    public int[] kmp(char[] text, char[] pattern){
+        int[] temp=calculateTemporaryArray(pattern);
+        int i=0,j=0;
+        ArrayList<Integer> res= new ArrayList<Integer>();
+        while(i<text.length&&j<pattern.length){
+            if(text[i]==pattern[j]){
+                i++;
+                j++;
+                if(j==pattern.length){
+                    res.add(i-pattern.length);
+                    j=0;
+                }
+            }
+            else{
+                if(j!=0){
+                    j=temp[j-1];
+                }
+                else
+                    i++;
+            }
+        }
+        int ret[]= new int[res.size()];
+        i=0;
+        for(Integer k:res)
+            ret[i++]=k;
+        return ret;
+    }
+    public int[] calculateTemporaryArray(char[] pattern){
+        int size=pattern.length;
+        int[] res= new int[size];
+        res[0]=0;
+        int index=0;
+        for(int i=1;i<size;i++){
+            if(pattern[i]==pattern[index]){
+                res[i]=index+1;
+                index++;
+            }
+            else{
+                if(index!=0){
+                    index=res[index-1];
+                }
+                else
+                    res[i]=index+1;
+            }
+        }
+        return res;
+    }
 }
