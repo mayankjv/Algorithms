@@ -7,6 +7,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 
 
+
+
+
+
+
+//This class stores the path string and all the files in a given path. A separate class is created for this because the user might need to switch between paths.
 class Path{
 	String path_string;
 	CopyOnWriteArrayList<DirectoryFile> files= new CopyOnWriteArrayList<DirectoryFile>();
@@ -15,17 +21,19 @@ class Path{
 		path_string= new String(path_to_folder);
 		//store_file_list(path_string,0);
 	}
+
+	//This method traverses through the folders and the subfolders and stores all the files that are present in an ArrayList
 	private void store_file_list(String path){
 
         File directory = new File(path);
         File[] fList = directory.listFiles();
-        System.out.println("Current Path: "+path+"\tnumber of files in present folder: "+fList.length);
+//        System.out.println("Current Path: "+path+"\tnumber of files in present folder: "+fList.length);
         for (int i=0;i<fList.length;i++){
         	File file = fList[i];
 //        	System.out.println("\nCurrent : "+file.getName());
             if (file.isFile()){
                 files.add(new DirectoryFile(file));
-//                System.out.println("\nAdded!");
+//              System.out.println("\nAdded!");
             }
             else{
             	String new_path=path+"\\"+file.getName();
@@ -33,6 +41,8 @@ class Path{
             }
         }
 	}
+
+	//public method that will help the user to get the list of the files present in a given path_string.
 	public CopyOnWriteArrayList<DirectoryFile> get_files(){
 		files= new CopyOnWriteArrayList<DirectoryFile>();
 		store_file_list(path_string);
@@ -46,6 +56,20 @@ class Path{
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+//This class stores all the attributes of a single file along with all the member functions that are needed to calculate the values of the attributes.
 class DirectoryFile{
 
 	private File file;
@@ -55,8 +79,11 @@ class DirectoryFile{
 	private long words;
 	private long size;
 	private long last_modified; 
+
+	//Constructor that sets all the attributes of a file by calling suitable functions.
 	DirectoryFile(File f){
 		file = f;
+		//Since BufferedReader is used, it might throw IOException
 		try{
 			type = set_type(file);
 			name = set_name(file);
@@ -70,42 +97,43 @@ class DirectoryFile{
 		}
 
 	}
-
+	//Getter mehtid for Name of the file
 	public String get_file_name(){
 		return name;
 	}
-
+	//Getter method for file type
 	public String get_type(){
 		return type;
 	}
-
+	//Getter method for Number of lines in the file
 	public int get_lines(){
 		return lines;
 	}
-
+	//Getter method for number of words in the file
 	public long get_words(){
 		return words;
 	}
-
+	////Getter method for the size of the file
 	public long get_size(){
 		return size;
 	}
-
+	//Getter method for the last modified timestamp of the file
 	public long get_last_modified(){
 		return last_modified;
 	}
-
+	//Method to set last modified timestamp
 	private void set_last_modified(){
 
 		last_modified=file.lastModified();
 	
 	}
+	//Method to set the size of the file
 	private void set_size(){
 	
 		size= file.length();
 	
 	}
-
+	//Method to set the number of words int the file
 	private void set_words() throws IOException{
 	
 		BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -124,7 +152,7 @@ class DirectoryFile{
 		}
 	
 	}
-
+	//Method to set the number of lines in the file
 	private void set_lines() throws IOException{
 	
 		BufferedReader reader = new BufferedReader(new FileReader(file));
@@ -132,8 +160,7 @@ class DirectoryFile{
 		reader.close();
 	
 	}
-
-
+	////Method to set the Name of the file
 	private String set_name(File file){
 
         String fileName = file.getName();
@@ -142,8 +169,7 @@ class DirectoryFile{
         else return "";
 
 	}
-
-
+	////Method to set the file type
 	private String set_type(File file){
 	
         String fileName = file.getName();
@@ -152,7 +178,7 @@ class DirectoryFile{
         else return "";
 	
 	}
-
+	//Mehtod to print all the attributes of a file in a single row.
 	public void print_file(){
 		System.out.println("File Name: "+name+"\tExtension: "+type+"\tWords: "+words+"\tLines: "+lines+"\tLast Modified: "+last_modified+"\tSize: "+size);
 	}
@@ -164,6 +190,16 @@ class DirectoryFile{
 
 
 
+
+
+
+
+
+
+
+
+
+//Implementing Comparator interface and overriding the method compare to sort on the basis of File Name
 class NameComparator implements Comparator<DirectoryFile>{
 
 	public int compare(DirectoryFile file1, DirectoryFile file2){
@@ -173,6 +209,18 @@ class NameComparator implements Comparator<DirectoryFile>{
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+//Implementing Comparator interface and overriding the method compare to sort on the basis of File Size
 class SizeComparator implements Comparator<DirectoryFile>{
 
 	public int compare(DirectoryFile file1, DirectoryFile file2){
@@ -181,16 +229,46 @@ class SizeComparator implements Comparator<DirectoryFile>{
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//Implementing Comparator interface and overriding the method compare to sort on the basis of Last modified timestamp
 class LastModifiedComparator implements Comparator<DirectoryFile>{
 
 	public int compare(DirectoryFile file1, DirectoryFile file2){
-		return (int)(file2.get_size()-file1.get_size());
+		return (int)(file2.get_last_modified()-file1.get_last_modified());
 	}
 }
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+//The public class that contains the main method, the interaction with user will be done in this class.
 public class FileStatistics{
 
 
@@ -206,8 +284,8 @@ public class FileStatistics{
 	}
 
 */
-
-	public static void main(String args[]){
+	//Main method 
+	public static void main(String args[]) throws IOException, InterruptedException{
 		System.out.println("\nEnter the path: ");
 		Scanner sc= new Scanner(System.in);
 		Path path = new Path(sc.nextLine());
@@ -218,8 +296,6 @@ public class FileStatistics{
 //		for(DirectoryFile f: all_files){
 //			f.print_file();
 //		}
-
-
 
 		int choice=0;
 		int len= path.get_files().size();
@@ -254,58 +330,77 @@ public class FileStatistics{
 
 		new Thread(r).start();
 */
-//		while(true){
+		while(true){
+			new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 			System.out.println("1. Display\n2. Sort\n3.Search");
 			System.out.println("Enter your choice:");
+			//Scanner might throw InputMismatchException in case an invalid input is supplied
 			try{
 				Scanner sc1=new Scanner(System.in);
 				choice= sc1.nextInt();
 			}
 			catch(InputMismatchException e){
 				System.out.println("Enter a valid Integer!!");
-				return;
+				break;
 			}
+			//Condition when user wants to Display all the files at a given point of time
 			if(choice == 1){
+				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 				CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
 				for(DirectoryFile f: temp)
 				f.print_file();
+				pressAnyKeyToContinue();
 			}			
+			//Condition when a user wants the files listed in a sorted manner.
 			else if(choice == 2){
+				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 				System.out.println("1. By Name\n2. By Last Modified\n3. By Size");
 				int ch = sc.nextInt();
 				CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
 				switch(ch){
+					//When sorting is to be done by Name
 					case 1:
 							Collections.sort(temp, new NameComparator());
+							new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 							for(DirectoryFile f: temp)
 								f.print_file();
+							pressAnyKeyToContinue();
+
 
 							break;
+					//When sorting is to be done by Last Modified
 					case 2:
 							Collections.sort(temp, new LastModifiedComparator());
 							//CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
+							new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 							for(DirectoryFile f: temp)
 								f.print_file();
-
+							pressAnyKeyToContinue();
 							break;
+					//When sorting is to be done by Size
 					case 3:
 							Collections.sort(temp, new SizeComparator());
 							//CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
+							new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 							for(DirectoryFile f: temp)
 								f.print_file();
-
+							pressAnyKeyToContinue();
 							break;
 					default:
 							break;
 				}
 			}
+			//When the user wants to search for a file
 			else if(choice == 3){
+				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 				CopyOnWriteArrayList<DirectoryFile> search_results = new CopyOnWriteArrayList<DirectoryFile>();
 				CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
 				System.out.println("1. By Name\n2. By Size");
 				int ch = sc.nextInt();
 				switch(ch){
+					//When the search is to be done by name
 					case 1:
+							new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 							System.out.println("Enter Search string: ");
 							String pattern= sc.next();
 							KMPSearch obj= new KMPSearch();
@@ -315,20 +410,81 @@ public class FileStatistics{
 									search_results.add(temp.get(i));
 								}
 							}
+							new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 							for(DirectoryFile f: search_results)
 								f.print_file();
+							pressAnyKeyToContinue();
 							break;
+					//When the search is to be done by size.
 					case 2:
+							System.out.println("1. Greater than\n2. Smaller than");
+							int ch1= sc.nextInt();
+							System.out.println("Value: ");
+							long val= sc.nextLong();
+							switch(ch1){
+								case 1:
+									for(int i=0;i<temp.size();i++){
+										if(temp.get(i).get_size()>val){
+											search_results.add(temp.get(i));
+										}
+									}
+									new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+									for(DirectoryFile f: search_results)
+										f.print_file();
+									pressAnyKeyToContinue();
+									break;
+								case 2:
+									for(int i=0;i<temp.size();i++){
+										if(temp.get(i).get_size()<val){
+											search_results.add(temp.get(i));
+										}
+									}
+									new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+									for(DirectoryFile f: search_results)
+										f.print_file();
+									pressAnyKeyToContinue();
+
+									break;
+								default:
+									new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+									System.out.println("Invalid Option selected!");
+									pressAnyKeyToContinue();
+									break;
+
+							}
 							break;
 					default:
 							break;
 				}
-
+			}
+			else{
+				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+				System.out.println("Invalid Choice");
 			}
 			//System.out.println(choice);
-//		}
+		}
 	}
+	private static void pressAnyKeyToContinue(){ 
+        System.out.println("Press Enter key to continue...");
+        try
+        {
+            System.in.read();
+        }  
+        catch(Exception e)
+        {}  
+ 	}
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
