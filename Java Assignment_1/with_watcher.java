@@ -1,7 +1,5 @@
 import java.util.*;
 import java.io.*;
-import java.util.concurrent.CopyOnWriteArrayList;
-//import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -13,20 +11,22 @@ import java.nio.file.WatchService;
 
 
 
+
 class WatchThread extends Thread{
 
 
-
-
-
+	//Declaring an object of WatchService
 	WatchService watchService;
 	String path = "";
 
 	public void set_path(String path_string){
 		path= path_string;
 	}
+
+	//Run method of the thread that will be executed in parallel
 	public void run(){
 		//System.out.println("Thread Running");
+		//WatchService.take() method might throw InterruptedExecution exception and IOException is likely to be thrown inside this try
 		try{
 				watchService = FileSystems.getDefault().newWatchService();
 				//System.out.println("Path: "+path);
@@ -34,6 +34,7 @@ class WatchThread extends Thread{
 //        		File[] fList = directory.listFiles();
 //        		int count=0;
     			Path _directory = Paths.get(path);
+    			//Registering the parent directory with watchservice to monitor it.
     			WatchKey key = _directory.register(watchService,
                         		  	StandardWatchEventKinds.ENTRY_CREATE,
                         		   	StandardWatchEventKinds.ENTRY_DELETE,
@@ -41,8 +42,8 @@ class WatchThread extends Thread{
 //    			count++;
 
 
-
         		File[] fList = directory.listFiles();
+        		//A loop that registers all the subdirectories of the folder with the watchservice so that they can be monitored for changes
         		for (int i=0;i<fList.length;i++){
         			File file = fList[i];
 //        			System.out.println("\nCurrent : "+file.getName());
@@ -50,14 +51,14 @@ class WatchThread extends Thread{
 						try {
 							String new_path= path+"\\"+file.getName();
     						Path _directotyToWatch = Paths.get(new_path);
-    						System.out.println("Registering "+_directotyToWatch);
+ //   						System.out.println("Registering "+_directotyToWatch);
     						key = _directotyToWatch.register(watchService,
                         		  				 StandardWatchEventKinds.ENTRY_CREATE,
                         		   				StandardWatchEventKinds.ENTRY_DELETE,
                         		   				StandardWatchEventKinds.ENTRY_MODIFY);
   						} 
-  						catch (IOException x) {
-    						System.err.println(x);
+  						catch (IOException e) {
+    						System.err.println(e);
   						}
 //              		System.out.println("\nAdded!");
             		}
@@ -71,6 +72,7 @@ class WatchThread extends Thread{
 
 //        		System.out.println("Current Path: "+path+"\tnumber of files in present folder: "+fList.length);
         		//System.out.println(count+" folders registered.");
+        		//Infinite loop to keep the Watch Thread always powered up and running.
         		Boolean valid = true;
         		do {
 //        			System.out.println("Infinite Loop!");
@@ -80,50 +82,23 @@ class WatchThread extends Thread{
 						WatchEvent.Kind kind = event.kind();
 						if (StandardWatchEventKinds.ENTRY_CREATE.equals(event.kind())) {
 							String fileName = event.context().toString();
+							//new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 							System.out.println("File Created:" + fileName);
 						}
 						else if (StandardWatchEventKinds.ENTRY_DELETE.equals(event.kind())) {
 							String fileName = event.context().toString();
+							//new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 							System.out.println("File Deleted:" + fileName);
 						}
 
 					}	
 					valid= watchKey.reset();	
             	} while(valid);
-//            		System.out.println("Out of for");
-            		//if (!watchKey.reset()) {
-                		//System.out.println("Failed to reset watch key: will not process more events");
-                		//break;
-            		//}	
         	}
 		catch(Exception e){
 			System.out.println(e);
 		}
-	}
-
-/*	private void registerFolder(String path_to_folder, WatchService watchService){
-		try {
-    		java.nio.file.Path _directotyToWatch = Paths.get(path_to_folder);
-    		WatchKey key = _directotyToWatch.register(watchService,
-                        		   StandardWatchEventKinds.ENTRY_CREATE,
-                        		   StandardWatchEventKinds.ENTRY_DELETE,
-                        		   StandardWatchEventKinds.ENTRY_MODIFY);
-  		} 
-  		catch (IOException x) {
-    		System.err.println(x);
-  		}
-	}
-*/
-	private void pressAnyKeyToContinue(){ 
-        System.out.println("Press Enter key to continue...");
-        try
-        {
-            System.in.read();
-        }  
-        catch(Exception e)
-        {}  
- 	}
- 	
+	} 	
 }
 
 
@@ -134,8 +109,9 @@ class WatchThread extends Thread{
 
 //This class stores the path string and all the files in a given path. A separate class is created for this because the user might need to switch between paths.
 class Path_{
+
 	String path_string;
-	CopyOnWriteArrayList<DirectoryFile> files= new CopyOnWriteArrayList<DirectoryFile>();
+	ArrayList<DirectoryFile> files= new ArrayList<DirectoryFile>();
 
 	Path_(String path_to_folder){
 		path_string= new String(path_to_folder);
@@ -163,8 +139,8 @@ class Path_{
 	}
 
 	//public method that will help the user to get the list of the files present in a given path_string.
-	public CopyOnWriteArrayList<DirectoryFile> get_files(){
-		files= new CopyOnWriteArrayList<DirectoryFile>();
+	public ArrayList<DirectoryFile> get_files(){
+		files= new ArrayList<DirectoryFile>();
 		store_file_list(path_string);
 		return this.files;
 	}
@@ -270,6 +246,7 @@ class DirectoryFile{
 			}
 	
 		}
+		reader.close();
 	
 	}
 	//Method to set the number of lines in the file
@@ -278,7 +255,6 @@ class DirectoryFile{
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		while (reader.readLine() != null) lines++;
 		reader.close();
-	
 	}
 	////Method to set the Name of the file
 	private String set_name(File file){
@@ -413,7 +389,7 @@ public class FileStatistics{
 
 //		System.out.println("Path: "+path.path_string);
 //		System.out.println("Number of files: "+path.get_files().size());
-//		CopyOnWriteArrayList<DirectoryFile> all_files= path.get_files();
+//		ArrayList<DirectoryFile> all_files= path.get_files();
 //		for(DirectoryFile f: all_files){
 //			f.print_file();
 //		}
@@ -426,10 +402,10 @@ public class FileStatistics{
         	public void run() {
         		while(true){
 	        	//	System.out.println("Thread Running...");
-					CopyOnWriteArrayList<DirectoryFile> all_files= path.get_files();
-					CopyOnWriteArrayList<DirectoryFile> temp = new CopyOnWriteArrayList<DirectoryFile>();
+					ArrayList<DirectoryFile> all_files= path.get_files();
+					ArrayList<DirectoryFile> temp = new ArrayList<DirectoryFile>();
         			temp=all_files;
-            		all_files= new CopyOnWriteArrayList<DirectoryFile>(path.get_files());
+            		all_files= new ArrayList<DirectoryFile>(path.get_files());
             		//When a new file is added
             		//System.out.println("Size of all_files: "+all_files.size()+"   Size of temp: "+temp.size());
             		if(temp.size()<all_files.size()){
@@ -455,7 +431,7 @@ public class FileStatistics{
 */
 		while(true){
 			new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-			System.out.println("1. Display\n2. Sort\n3.Search");
+			System.out.println("1. Display\n2. Sort\n3. Search\n4. Exit");
 			System.out.println("Enter your choice:");
 			//Scanner might throw InputMismatchException in case an invalid input is supplied
 			try{
@@ -469,7 +445,8 @@ public class FileStatistics{
 			//Condition when user wants to Display all the files at a given point of time
 			if(choice == 1){
 				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-				CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
+				System.out.println("PRESS ENTER TO GO TO THE MAIN MENU \n\n\n\n");
+				ArrayList<DirectoryFile> temp= path.get_files();
 				for(DirectoryFile f: temp)
 				f.print_file();
 				pressAnyKeyToContinue();
@@ -479,12 +456,15 @@ public class FileStatistics{
 				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 				System.out.println("1. By Name\n2. By Last Modified\n3. By Size");
 				int ch = sc.nextInt();
-				CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
+				ArrayList<DirectoryFile> temp= path.get_files();
 				switch(ch){
 					//When sorting is to be done by Name
 					case 1:
 							Collections.sort(temp, new NameComparator());
 							new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+							System.out.println("PRESS ENTER TO GO TO THE MAIN MENU \n\n\n\n");
+							if(temp.size()==0)
+								System.out.println("Nothing to Display!!");
 							for(DirectoryFile f: temp)
 								f.print_file();
 							pressAnyKeyToContinue();
@@ -494,8 +474,11 @@ public class FileStatistics{
 					//When sorting is to be done by Last Modified
 					case 2:
 							Collections.sort(temp, new LastModifiedComparator());
-							//CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
+							//ArrayList<DirectoryFile> temp= path.get_files();
 							new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+							System.out.println("PRESS ENTER TO GO TO THE MAIN MENU \n\n\n\n");
+							if(temp.size()==0)
+								System.out.println("Nothing to Display!!");
 							for(DirectoryFile f: temp)
 								f.print_file();
 							pressAnyKeyToContinue();
@@ -503,8 +486,11 @@ public class FileStatistics{
 					//When sorting is to be done by Size
 					case 3:
 							Collections.sort(temp, new SizeComparator());
-							//CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
+							//ArrayList<DirectoryFile> temp= path.get_files();
 							new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+							System.out.println("PRESS ENTER TO GO TO THE MAIN MENU \n\n\n\n");
+							if(temp.size()==0)
+								System.out.println("Nothing to Display!!");							
 							for(DirectoryFile f: temp)
 								f.print_file();
 							pressAnyKeyToContinue();
@@ -516,14 +502,15 @@ public class FileStatistics{
 			//When the user wants to search for a file
 			else if(choice == 3){
 				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-				CopyOnWriteArrayList<DirectoryFile> search_results = new CopyOnWriteArrayList<DirectoryFile>();
-				CopyOnWriteArrayList<DirectoryFile> temp= path.get_files();
+				ArrayList<DirectoryFile> search_results = new ArrayList<DirectoryFile>();
+				ArrayList<DirectoryFile> temp= path.get_files();
 				System.out.println("1. By Name\n2. By Size");
 				int ch = sc.nextInt();
 				switch(ch){
 					//When the search is to be done by name
 					case 1:
 							new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+							System.out.println("PRESS ENTER TO GO TO THE MAIN MENU \n\n\n\n");
 							System.out.println("Enter Search string: ");
 							String pattern= sc.next();
 							KMPSearch obj= new KMPSearch();
@@ -534,14 +521,19 @@ public class FileStatistics{
 								}
 							}
 							new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+							System.out.println("PRESS ENTER TO GO TO THE MAIN MENU \n\n\n\n");
+							if(search_results.size()==0)
+								System.out.println("Nothing to Display!");
 							for(DirectoryFile f: search_results)
 								f.print_file();
 							pressAnyKeyToContinue();
 							break;
 					//When the search is to be done by size.
 					case 2:
+							new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 							System.out.println("1. Greater than\n2. Smaller than");
 							int ch1= sc.nextInt();
+							new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 							System.out.println("Value: ");
 							long val= sc.nextLong();
 							switch(ch1){
@@ -552,6 +544,9 @@ public class FileStatistics{
 										}
 									}
 									new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+									System.out.println("PRESS ENTER TO GO TO THE MAIN MENU \n\n\n\n");
+									if(search_results.size()==0)
+										System.out.println("Nothing to Display!");
 									for(DirectoryFile f: search_results)
 										f.print_file();
 									pressAnyKeyToContinue();
@@ -563,6 +558,10 @@ public class FileStatistics{
 										}
 									}
 									new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+									System.out.println("PRESS ENTER TO GO TO THE MAIN MENU \n\n\n\n");
+									if(search_results.size()==0)
+										System.out.println("Nothing to Display!");
+
 									for(DirectoryFile f: search_results)
 										f.print_file();
 									pressAnyKeyToContinue();
@@ -570,6 +569,7 @@ public class FileStatistics{
 									break;
 								default:
 									new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+									System.out.println("PRESS ENTER TO GO TO THE MAIN MENU \n\n\n\n");
 									System.out.println("Invalid Option selected!");
 									pressAnyKeyToContinue();
 									break;
@@ -580,6 +580,10 @@ public class FileStatistics{
 							break;
 				}
 			}
+			else if(choice == 4){
+				//th.join();
+				System.exit(0);
+			}
 			else{
 				new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
 				System.out.println("Invalid Choice");
@@ -588,7 +592,7 @@ public class FileStatistics{
 		}
 	}
 	private static void pressAnyKeyToContinue(){ 
-        System.out.println("Press Enter key to continue...");
+        //System.out.println("Press Enter key to continue...");
         try
         {
             System.in.read();
